@@ -119,6 +119,14 @@
   .lc-row figure{margin:0;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
   .lc-row figure svg{width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
   .lc-png{font-size:12px;padding:4px 10px}
+  .lc-tip{position:absolute;z-index:6;pointer-events:none;background:#1a1a1a;color:#eee;border:1px solid #555;border-radius:8px;padding:8px 10px;
+    font-size:12px;box-shadow:0 4px 14px rgba(0,0,0,.45);min-width:150px}
+  .lc-td{font-weight:600;margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid #444}
+  .lc-tr{display:flex;align-items:center;gap:7px;line-height:1.6;white-space:nowrap}
+  .lc-tr .sw{width:10px;height:10px;border-radius:2px;flex:none}
+  .lc-tr b{margin-left:auto;padding-left:16px;font-variant-numeric:tabular-nums;font-weight:500}
+  .lc-tr.on{font-weight:700}.lc-tr.on b{font-weight:700}
+  .lc-th{margin-top:5px;font-size:10px;color:#999}
   @media (max-width:900px){ .lc-row{grid-template-columns:minmax(0,1fr)} }
 
   /* IC calculator */
@@ -4844,6 +4852,7 @@ function lcChartSvg(o){
   const y0=-top*0.05, y1=top+top*0.02;
   const X=x=>padL+(x-x0)/(x1-x0)*pw, Y=y=>padT+ph-(y-y0)/(y1-y0)*ph;
   const exp=top>=1e6?6:0, div=Math.pow(10,exp);
+  LC_LAST_GEO={W,H,padL,padT,pw,ph,x0,x1,y0,y1};
   let s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" class="svgchart lcsvg" font-family="DejaVu Sans, Verdana, Arial, sans-serif">';
   s+='<rect width="'+W+'" height="'+H+'" fill="'+st.bg+'"/>';
   // grid + ticks
@@ -4878,13 +4887,17 @@ function lcChartSvg(o){
     s+='<line x1="'+(lx+8)+'" y1="'+yy+'" x2="'+(lx+36)+'" y2="'+yy+'" stroke="'+LC_COLORS[i%LC_COLORS.length]+'" stroke-width="2"/>';
     s+='<text x="'+(lx+46)+'" y="'+(yy+6)+'" font-size="17" fill="'+st.fg+'">'+esc(se.name)+'</text>';
   });
+  // hover layer (wired in lcWireHover; invisible until used and ignored by the PNG export)
+  s+='<line class="lc-cross" y1="'+padT+'" y2="'+(padT+ph)+'" stroke="'+st.fg+'" stroke-width="1" stroke-dasharray="4,3" style="display:none"/><g class="lc-dots"></g>';
+  s+='<rect class="lc-hit" x="'+padL+'" y="'+padT+'" width="'+pw+'" height="'+ph+'" fill="transparent" style="cursor:crosshair"/>';
   // titles
   s+='<text x="'+(padL+pw/2)+'" y="30" text-anchor="middle" font-size="26" fill="'+st.fg+'">'+esc(o.title)+'</text>';
   s+='<text x="'+(padL+pw/2)+'" y="'+(H-14)+'" text-anchor="middle" font-size="19" fill="'+st.fg+'">'+esc(o.xlabel)+'</text>';
   s+='<text transform="translate(24,'+(padT+ph/2)+') rotate(-90)" text-anchor="middle" font-size="19" fill="'+st.fg+'">'+esc(o.ylabel)+'</text>';
   return s+'</svg>';
 }
-let LC_CHARTS=[];    // {file, svg} for the PNG export
+let LC_CHARTS=[];    // {file, svg, ser, geo, kind} for the PNG export and the hover tooltips
+let LC_LAST_GEO=null;
 function renderLineCharts(){
   const body=$('lcBody'); if(!DATA){ body.innerHTML=''; return; }
   const metric=$('metric').value, ml=LC_METRIC_LABEL[metric]||metric, style=$('lcStyle').value;
@@ -4892,11 +4905,12 @@ function renderLineCharts(){
   LC_GROUPS.forEach(g=>{
     const ents=lcMembers(g); if(!ents.length) return;
     const ser=ents.map(e=>({name:e.name,...lcSeries(DATA,e.members,metric)}));
-    const mono=lcChartSvg({title:'Monthly '+ml,xlabel:'Year',ylabel:'Monthly '+ml,style,series:ser.map(s=>({name:s.name,pts:s.monthly}))});
-    const prod=lcChartSvg({title:'Produced '+ml,xlabel:'Years',ylabel:'Produced '+ml,style,series:ser.map(s=>({name:s.name,pts:s.produced}))});
+    const sm=ser.map(s=>({name:s.name,pts:s.monthly})), sp=ser.map(s=>({name:s.name,pts:s.produced}));
+    const mono=lcChartSvg({title:'Monthly '+ml,xlabel:'Year',ylabel:'Monthly '+ml,style,series:sm}), gm=LC_LAST_GEO;
+    const prod=lcChartSvg({title:'Produced '+ml,xlabel:'Years',ylabel:'Produced '+ml,style,series:sp}), gp=LC_LAST_GEO;
     if(!mono&&!prod) return;
     const slug='ic_'+g.id+'_'+metric.toLowerCase();
-    LC_CHARTS.push({file:slug+'_monthly.png',svg:mono},{file:slug+'_produced.png',svg:prod});
+    LC_CHARTS.push({file:slug+'_monthly.png',svg:mono,ser:sm,geo:gm,kind:'monthly'},{file:slug+'_produced.png',svg:prod,ser:sp,geo:gp,kind:'produced'});
     const idx=LC_CHARTS.length-2;
     h+='<div class="lc-group"><h3>'+esc(g.title)+'</h3><div class="lc-row">'
       +'<figure>'+mono+'<button class="lc-png" data-i="'+idx+'">Download PNG</button></figure>'
@@ -4904,6 +4918,55 @@ function renderLineCharts(){
   });
   body.innerHTML=h||'<p class="viewsub">None of the preset countries are in this log.</p>';
   body.querySelectorAll('.lc-png').forEach(b=>b.onclick=()=>lcDownload(+b.dataset.i));
+  body.querySelectorAll('figure').forEach((fig,k)=>lcWireHover(fig,LC_CHARTS[k]));
+}
+// hover: vertical guide, a dot on every line and a tooltip with each series' exact value at that date; click pins it
+function lcDateLabel(x,kind){
+  const yr=Math.floor(x+1e-9), frac=x-yr;
+  if(kind==='monthly'){ const mo=Math.min(11,Math.round(frac*12)); return RES_MONTHS_LC[mo]+' '+yr; }
+  const day=Math.round(frac*365), d=new Date(Date.UTC(yr,0,1+day));
+  return d.getUTCDate()+' '+RES_MONTHS_LC[d.getUTCMonth()]+' '+d.getUTCFullYear();
+}
+const RES_MONTHS_LC=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function lcNearest(pts,x){
+  let lo=0,hi=pts.length-1;
+  while(lo<hi){ const m=(lo+hi)>>1; if(pts[m][0]<x) lo=m+1; else hi=m; }
+  if(lo>0 && Math.abs(pts[lo-1][0]-x)<=Math.abs(pts[lo][0]-x)) lo--;
+  return lo;
+}
+function lcWireHover(fig,c){
+  const svg=fig.querySelector('svg'); if(!svg||!c||!c.geo) return;
+  const hit=svg.querySelector('.lc-hit'), cross=svg.querySelector('.lc-cross'), dots=svg.querySelector('.lc-dots');
+  const G=c.geo;
+  fig.style.position='relative';
+  const tip=document.createElement('div'); tip.className='lc-tip'; tip.style.display='none'; fig.appendChild(tip);
+  let pinned=false;
+  const colorOf_=i=>LC_COLORS[i%LC_COLORS.length];
+  const Y=y=>G.padT+G.ph-(y-G.y0)/(G.y1-G.y0)*G.ph;
+  const X=x=>G.padL+(x-G.x0)/(G.x1-G.x0)*G.pw;
+  const hide=()=>{ if(pinned)return; cross.style.display='none'; dots.innerHTML=''; tip.style.display='none'; };
+  hit.onmouseleave=hide;
+  hit.onclick=ev=>{ pinned=!pinned; if(!pinned) hit.onmousemove(ev); };
+  hit.onmousemove=ev=>{
+    if(pinned) return;
+    const r=svg.getBoundingClientRect(), vx=(ev.clientX-r.left)/r.width*G.W, vy=(ev.clientY-r.top)/r.height*G.H;
+    const dx=G.x0+(Math.max(G.padL,Math.min(G.padL+G.pw,vx))-G.padL)/G.pw*(G.x1-G.x0);
+    // snap to the nearest data point of the first series; every series is read at that same date
+    const ref=c.ser[0].pts, ri=lcNearest(ref,dx), xs=ref[ri][0];
+    const rows=c.ser.map((s,i)=>{ const j=lcNearest(s.pts,xs), p=s.pts[j]; return {name:s.name,i,v:p[1],x:p[0]}; });
+    let near=-1, nd=Infinity; rows.forEach((o,k)=>{ const d=Math.abs(Y(o.v)-vy); if(d<nd){ nd=d; near=k; } });
+    cross.setAttribute('x1',X(xs).toFixed(1)); cross.setAttribute('x2',X(xs).toFixed(1)); cross.style.display='';
+    dots.innerHTML=rows.map(o=>'<circle cx="'+X(o.x).toFixed(1)+'" cy="'+Y(o.v).toFixed(1)+'" r="'+(o.i===rows[near].i?5:3.5)+'" fill="'+colorOf_(o.i)+'" stroke="#fff" stroke-width="1"/>').join('');
+    const sorted=rows.slice().sort((a,b)=>b.v-a.v);
+    tip.innerHTML='<div class="lc-td">'+esc(lcDateLabel(xs,c.kind))+(pinned?'':'')+'</div>'
+      +sorted.map(o=>'<div class="lc-tr'+(o.i===rows[near].i?' on':'')+'"><span class="sw" style="background:'+colorOf_(o.i)+'"></span><span>'+esc(o.name)+'</span><b>'+Math.round(o.v).toLocaleString()+'</b></div>').join('')
+      +'<div class="lc-th">click to pin</div>';
+    tip.style.display='';
+    const fr=fig.getBoundingClientRect(), w=tip.offsetWidth, hgt=tip.offsetHeight;
+    let left=ev.clientX-fr.left+16; if(left+w>fr.width-4) left=ev.clientX-fr.left-w-16;
+    let top=ev.clientY-fr.top-hgt/2; top=Math.max(4,Math.min(top,fr.height-hgt-40));
+    tip.style.left=Math.max(4,left)+'px'; tip.style.top=top+'px';
+  };
 }
 function lcDownload(i){
   const c=LC_CHARTS[i]; if(!c||!c.svg) return;
