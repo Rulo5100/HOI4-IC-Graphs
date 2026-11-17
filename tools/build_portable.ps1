@@ -19,9 +19,9 @@ $files = [ordered]@{
     "HOI4_Analyzer\README.md"                          = "HOI4_Analyzer\README.md"
     "_internal\DataCollection\DataCollection_1.19.4.dll" = "DataCollection\DataCollection_1.19.4.dll"
     "_internal\DataCollection\DataCollection_1.19.5.dll" = "DataCollection\DataCollection_1.19.5.dll"
-    "saves_to_log.js"                                  = "converter\saves_to_log.js"
-    "hoi4_bin2txt.js"                                  = "converter\hoi4_bin2txt.js"
-    "hoi4_tokens.json"                                 = "converter\hoi4_tokens.json"
+    "converter\saves_to_log.js"                        = "converter\saves_to_log.js"
+    "converter\hoi4_bin2txt.js"                        = "converter\hoi4_bin2txt.js"
+    "converter\hoi4_tokens.json"                       = "converter\hoi4_tokens.json"
     "tools\portable\README.txt"                        = "README.txt"
     "tools\portable\convert_saves.bat"                 = "convert_saves.bat"
 }

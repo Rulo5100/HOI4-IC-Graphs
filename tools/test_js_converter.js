@@ -2,11 +2,11 @@ const fs = require('fs');
 const path = require('path');
 
 // Load converter
-const conv = require(path.join(__dirname, '..', 'hoi4_bin2txt.js'));
+const conv = require(path.join(__dirname, '..', 'converter', 'hoi4_bin2txt.js'));
 const {meltHoi4, isHoi4Binary} = conv;
 
 // Load token dictionary
-const tokens = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'hoi4_tokens.json'), 'utf8'));
+const tokens = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'converter', 'hoi4_tokens.json'), 'utf8'));
 
 // Load binary save
 const savePath = String.raw`C:\Users\Roberts (ME)\Documents\Paradox Interactive\Hearts of Iron IV\save games\autosave.hoi4`;

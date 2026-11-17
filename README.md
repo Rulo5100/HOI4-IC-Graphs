@@ -24,4 +24,13 @@ The analyzer replaces gui.exe for collecting data. It injects the same DataColle
 3. Open bar_charts.html and load output.txt from the game folder (or a file from the logging folder).
 It only starts with a DLL made for the exact game version. For a version it does not ship (it has DLLs up to 1.19.4), use Settings > DataCollection DLLs > Add DLL and pick a file named DataCollection_<version>.dll, for example _internal/DataCollection/DataCollection_1.19.5.dll from this repository.
 
+FOLDERS
+  bar_charts.html   the charts (single offline file)
+  HOI4_Analyzer     the analyzer collector
+  gui.exe, _internal   the original collector (DataCollection DLLs live in _internal/DataCollection)
+  converter         saves_to_log.js: turn a folder of saves into a log (node converter/saves_to_log.js <folder> --daily)
+  ic_calculator     IC Calculator source; after editing, run node ic_calculator/inject_ic.js to rebuild bar_charts.html
+  logging           saved logs
+  tools             build_portable.ps1 and dev scripts
+
 https://github.com/otti086-Org/HOI4-IC-Graphs
