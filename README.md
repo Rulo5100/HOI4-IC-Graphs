@@ -1,36 +1,34 @@
-NOTE: This repository uses Git LFS. Downloading the .zip file will not work, you always need to clone the git. 
+NOTE: This repository uses Git LFS. Downloading the .zip file from GitHub will not work, you need to clone the git.
 
-NO GIT? Use HOI4-IC-Graphs-portable.zip (about 19 MB) instead. It has bar_charts.html, the HOI4 IC Analyzer, the DataCollection DLLs and the save converter, and needs no git, Python or gui.exe. Unzip it and read README.txt inside.
+NO GIT? Use HOI4-IC-Graphs-portable.zip (about 19 MB) instead. It has everything below and needs no git or install. Unzip it and read README.txt inside.
 To build it from a clone: pwsh tools\build_portable.ps1 (the zip is written to dist\).
 
 HOW TO USE:
-1. Clone the Git with Github Desktop (dowloading .zip does not work)
-2. Start hoi4 (works with Vanilla and all mods)
-3. Start gui.exe and select the hoi4 version you are using and press "Start Data Collection"
-4. When the game is running a file with data will be created in the hoi4 base game folder e.g. C:\Program Files (x86)\Steam\steamapps\common\Hearts of Iron IV
-5. Within the GUI select the .txt file to load and graph data.
-     "Individual IC (File 1)" - graphs one line for each country selected, no matter the faction
-     "Factions IC (File 1)" - graphs one line for each faction, adds up the countries
-     "Compare Individual IC (Files 1 & 2)" - select two .txt files, compare countries from different games
-     "Compare Faction IC (Files 1 & 2)" - select two .txt files, compare factions from different games
+1. Clone the Git with Github Desktop (downloading the .zip does not work)
+2. Start HOI4_Analyzer.exe and leave it open
+3. Start hoi4 (works with vanilla and all mods). The analyzer picks the DLL that matches the game version and starts collecting once the game has loaded.
+4. While the game runs, a log file (output_<date>.txt) is written to the hoi4 game folder, e.g. C:\Program Files (x86)\Steam\steamapps\common\Hearts of Iron IV
+5. Open bar_charts.html in a browser and load the log (from the game folder or the logging folder).
 
+NEW GAME VERSION?
+The analyzer only starts with a DLL made for the exact game version, and it ships DLLs up to 1.19.4.
+For a newer version use Settings > DataCollection DLLs > Add DLL in the analyzer and pick the matching file from the DataCollection folder, for example DataCollection/DataCollection_1.19.5.dll. You only do this once per PC; the analyzer keeps its own copy in %LOCALAPPDATA%\HOI4_Analyzer\DataCollection.
+DataCollection_1.19.4.dll in that folder is the fixed 1.19.4 build (the older one crashed on the first day tick on 1.19.4.2).
 
-ALTERNATIVE COLLECTOR: HOI4 IC Analyzer (zVSciy), v3.1.0
-The analyzer replaces gui.exe for collecting data. It injects the same DataCollection DLL into hoi4.exe and writes the same output.txt into the HOI4 game folder, so bar_charts.html reads its files unchanged.
-1. The v3.1.0 exe is included in the HOI4_Analyzer folder, unmodified. It is third-party, proprietary software (the source is private) from https://github.com/zVSciy/Hoi4GraphToolReleases/releases/tag/v3.1.0
+ABOUT THE ANALYZER
+HOI4_Analyzer.exe is HOI4 IC Analyzer v3.1.0 by zVSciy, included unmodified. It is third-party, proprietary software (the source is private) from https://github.com/zVSciy/Hoi4GraphToolReleases/releases/tag/v3.1.0
    SHA256 of HOI4_Analyzer_Rust_v3.1.0.zip: FEA03276DB2BAE2AF3C1714C2E01FB6FBD7C3489DDE79915E56003B2CEDBC0EA
    SHA256 of HOI4_Analyzer.exe: 88E8675DD6C13BBDC97C0C55497F3722F5D24073CC8F00CA7254F1F5AC74FFF3
-2. Start HOI4_Analyzer.exe and leave it open, then start the game. It picks the DLL that matches the game version and starts collecting after the game has loaded.
-3. Open bar_charts.html and load output.txt from the game folder (or a file from the logging folder).
-It only starts with a DLL made for the exact game version. For a version it does not ship (it has DLLs up to 1.19.4), use Settings > DataCollection DLLs > Add DLL and pick a file named DataCollection_<version>.dll, for example _internal/DataCollection/DataCollection_1.19.5.dll from this repository.
+Its own manual is docs/HOI4_Analyzer.md. It replaces the old gui.exe collector (removed here; it is still in upstream and in this repo's history).
 
 FOLDERS
-  bar_charts.html   the charts (single offline file)
-  HOI4_Analyzer     the analyzer collector
-  gui.exe, _internal   the original collector (DataCollection DLLs live in _internal/DataCollection)
-  converter         saves_to_log.js: turn a folder of saves into a log (node converter/saves_to_log.js <folder> --daily)
-  ic_calculator     IC Calculator source; after editing, run node ic_calculator/inject_ic.js to rebuild bar_charts.html
-  logging           saved logs
-  tools             build_portable.ps1 and dev scripts
+  bar_charts.html     the charts (single offline file)
+  HOI4_Analyzer.exe   the IC collector
+  DataCollection      DLLs for game versions the analyzer does not ship
+  converter           saves_to_log.js: turn a folder of saves into a log (node converter/saves_to_log.js <folder> --daily)
+  ic_calculator       IC Calculator source; after editing, run node ic_calculator/inject_ic.js to rebuild bar_charts.html
+  logging             saved logs
+  docs                the analyzer manual
+  tools               build_portable.ps1 and dev scripts
 
 https://github.com/otti086-Org/HOI4-IC-Graphs

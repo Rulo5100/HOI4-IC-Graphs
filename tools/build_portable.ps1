@@ -1,4 +1,4 @@
-# Builds dist\HOI4-IC-Graphs-portable.zip: a lean copy that works without git, LFS, Python or gui.exe.
+# Builds dist\HOI4-IC-Graphs-portable.zip: a lean copy that works without git, LFS or Python.
 #   pwsh tools\build_portable.ps1 [-OutDir dist] [-NoExample]
 param(
     [string]$OutDir = "dist",
@@ -15,10 +15,10 @@ $zip = Join-Path $OutDir "$name.zip"
 $files = [ordered]@{
     "bar_charts.html"                                  = "bar_charts.html"
     "LICENSE.txt"                                      = "LICENSE.txt"
-    "HOI4_Analyzer\HOI4_Analyzer.exe"                  = "HOI4_Analyzer\HOI4_Analyzer.exe"
-    "HOI4_Analyzer\README.md"                          = "HOI4_Analyzer\README.md"
-    "_internal\DataCollection\DataCollection_1.19.4.dll" = "DataCollection\DataCollection_1.19.4.dll"
-    "_internal\DataCollection\DataCollection_1.19.5.dll" = "DataCollection\DataCollection_1.19.5.dll"
+    "HOI4_Analyzer.exe"                                = "HOI4_Analyzer.exe"
+    "docs\HOI4_Analyzer.md"                            = "docs\HOI4_Analyzer.md"
+    "DataCollection\DataCollection_1.19.4.dll"         = "DataCollection\DataCollection_1.19.4.dll"
+    "DataCollection\DataCollection_1.19.5.dll"         = "DataCollection\DataCollection_1.19.5.dll"
     "converter\saves_to_log.js"                        = "converter\saves_to_log.js"
     "converter\hoi4_bin2txt.js"                        = "converter\hoi4_bin2txt.js"
     "converter\hoi4_tokens.json"                       = "converter\hoi4_tokens.json"

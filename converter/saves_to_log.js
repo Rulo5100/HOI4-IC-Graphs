@@ -2,7 +2,7 @@
 /*
  * saves_to_log.js - turn a set of HOI4 saves (for example the monthly autosaves) into an IC log
  * in the same format the data-collection DLL writes (output_YYYY-MM-DD_HH-MM-SS.txt), so the
- * result opens in gui.exe and bar_charts.html like any other log.
+ * result opens in bar_charts.html like any other log.
  *
  *   node saves_to_log.js <folder | save.hoi4 ...> [--out file.txt] [--all] [--daily] [--civ omit|zero|levels]
  *

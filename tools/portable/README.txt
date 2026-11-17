@@ -3,14 +3,14 @@ No git, Python or install needed. Unzip anywhere and use.
 
 WHAT IS IN HERE
   bar_charts.html          The charts. Opens in any browser, works offline, nothing is uploaded.
-  HOI4_Analyzer\           The IC collector (HOI4 IC Analyzer v3.1.0 by zVSciy, third party).
+  HOI4_Analyzer.exe        The IC collector (HOI4 IC Analyzer v3.1.0 by zVSciy, third party). Manual in docs\.
   DataCollection\          Collector DLLs for game versions the analyzer does not ship (1.19.4 fixed, 1.19.5).
   convert_saves.bat        Turns a folder of saves (for example monthly autosaves) into an IC log. Needs Node.js.
   converter\               The scripts convert_saves.bat uses.
   logs\                    Example log. Converted logs land here too.
 
 COLLECT IC FROM A GAME
-  1. Start HOI4_Analyzer\HOI4_Analyzer.exe and leave it open.
+  1. Start HOI4_Analyzer.exe and leave it open.
   2. Start the game (vanilla or any mod). Collection starts once the game has loaded.
   3. The log is written as output_<date>.txt in the HOI4 game folder,
      for example C:\Program Files (x86)\Steam\steamapps\common\Hearts of Iron IV
