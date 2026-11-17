@@ -309,10 +309,10 @@
 </header>
 
 <div class="tabs" id="tabs">
-  <button class="tab active" data-view="race">🏁 Snapshot Race</button>
-  <button class="tab" data-view="final">🏆 Final &amp; Cumulative</button>
-  <button class="tab" data-view="yearly">📅 Yearly Snapshots</button>
-  <button class="tab" data-view="timeline">📈 Timeline</button>
+  <button class="tab" data-view="race" style="display:none">🏁 Snapshot Race</button>
+  <button class="tab" data-view="final" style="display:none">🏆 Final &amp; Cumulative</button>
+  <button class="tab" data-view="yearly" style="display:none">📅 Yearly Snapshots</button>
+  <button class="tab active" data-view="timeline">📈 Timeline</button>
   <button class="tab" data-view="linecharts">📉 Line Charts</button>
   <button class="tab" data-view="iccalc">🧮 IC Calculator</button>
   <button class="tab" data-view="compare" id="tabCompare" style="display:none">⚖ Compare files</button>
@@ -3606,7 +3606,7 @@ function assignColors(){
 const fmt=n=>n>=1000?Math.round(n).toLocaleString():(n>=100?Math.round(n):n.toFixed(1));
 
 /* ---------- tabs ---------- */
-let currentView='race';
+let currentView='timeline';
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   t.classList.add('active');
@@ -3616,12 +3616,16 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   if(needsData && !DATA){ $('hint').style.display=''; }      // prompt to load a log
   else { $('hint').style.display='none'; $('view-'+currentView).classList.add('active'); }
   if(currentView!=='race')stopPlay();
+  syncToolbar();
+  render();
+});
+function syncToolbar(){
   const inCalc=currentView==='iccalc';
   $('metric').parentNode.style.display=inCalc?'none':'';
   $('topN').parentNode.style.display=(inCalc||currentView==='linecharts')?'none':'';
-  $('chartType').parentNode.style.display=currentView==='linecharts'?'none':'';
-  render();
-});
+  $('chartType').parentNode.style.display=(currentView==='linecharts'||currentView==='timeline')?'none':'';
+}
+syncToolbar();
 $('metric').onchange=render;
 $('chartType').onchange=()=>{chartType=$('chartType').value;render();};
 $('raceFile').onchange=renderRace;
@@ -3749,7 +3753,7 @@ function setupRace(){
   const s=$('raceSlider');
   s.min=0;s.max=DATA.dates.length-1;s.value=DATA.dates.length-1;
   s.oninput=()=>{stopPlay();renderRace();};
-  $('view-race').classList.add('active');
+  $('view-'+currentView).classList.add('active');
 }
 $('playBtn').onclick=()=>{playTimer?stopPlay():startPlay();};
 $('raceSpeed').onchange=()=>{if(playTimer){stopPlay();startPlay();}};

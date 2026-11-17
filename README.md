@@ -1,5 +1,8 @@
 NOTE: This repository uses Git LFS. Downloading the .zip file will not work, you always need to clone the git. 
 
+NO GIT? Use HOI4-IC-Graphs-portable.zip (about 19 MB) instead. It has bar_charts.html, the HOI4 IC Analyzer, the DataCollection DLLs and the save converter, and needs no git, Python or gui.exe. Unzip it and read README.txt inside.
+To build it from a clone: pwsh tools\build_portable.ps1 (the zip is written to dist\).
+
 HOW TO USE:
 1. Clone the Git with Github Desktop (dowloading .zip does not work)
 2. Start hoi4 (works with Vanilla and all mods)
