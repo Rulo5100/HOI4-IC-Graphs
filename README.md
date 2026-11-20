@@ -12,8 +12,8 @@ HOW TO USE:
 
 NEW GAME VERSION?
 The analyzer only starts with a DLL made for the exact game version, and it ships DLLs up to 1.19.4.
-For a newer version use Settings > DataCollection DLLs > Add DLL in the analyzer and pick the matching file from the DataCollection folder, for example DataCollection/DataCollection_1.19.5.dll. You only do this once per PC; the analyzer keeps its own copy in %LOCALAPPDATA%\HOI4_Analyzer\DataCollection.
-DataCollection_1.19.4.dll in that folder is the fixed 1.19.4 build (the older one crashed on the first day tick on 1.19.4.2).
+Newer versions are in the DataCollection folder next to HOI4_Analyzer.exe (1.19.5 and 1.20.0.0). The analyzer lists every DLL in that folder, so there is nothing to add; with "auto select version" on it picks the one matching the game.
+Each game build moves the addresses the DLL hooks, so a DLL only works for the exact version in its file name. DataCollection_1.19.4.dll is the fixed 1.19.4 build (the older one crashed on the first day tick on 1.19.4.2). DataCollection_1.20.0.0.dll is the 1.19.5 DLL with the four addresses (GetLongString, CGStateDate, CountryDataBase, CGameStateDailyUpdate) changed to the 1.20.0.0 ones; see docs/dll_offsets.md.
 
 ABOUT THE ANALYZER
 HOI4_Analyzer.exe is HOI4 IC Analyzer v3.1.0 by zVSciy, included unmodified. It is third-party, proprietary software (the source is private) from https://github.com/zVSciy/Hoi4GraphToolReleases/releases/tag/v3.1.0

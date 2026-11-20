@@ -4,7 +4,7 @@ No git, Python or install needed. Unzip anywhere and use.
 WHAT IS IN HERE
   bar_charts.html          The charts. Opens in any browser, works offline, nothing is uploaded.
   HOI4_Analyzer.exe        The IC collector (HOI4 IC Analyzer v3.1.0 by zVSciy, third party). Manual in docs\.
-  DataCollection\          Collector DLLs for game versions the analyzer does not ship (1.19.4 fixed, 1.19.5).
+  DataCollection\          Collector DLLs for game versions the analyzer does not ship (1.19.4 fixed, 1.19.5, 1.20.0.0).
   convert_saves.bat        Turns a folder of saves (for example monthly autosaves) into an IC log. Needs Node.js.
   converter\               The scripts convert_saves.bat uses.
   logs\                    Example log. Converted logs land here too.
@@ -15,9 +15,10 @@ COLLECT IC FROM A GAME
   3. The log is written as output_<date>.txt in the HOI4 game folder,
      for example C:\Program Files (x86)\Steam\steamapps\common\Hearts of Iron IV
 
-  Game version not supported yet? In the analyzer open Settings > DataCollection DLLs > Add DLL
-  and pick the matching file from the DataCollection folder (for example DataCollection_1.19.5.dll).
-  The file name must stay DataCollection_<version>.dll.
+  The analyzer lists every DLL in the DataCollection folder next to it and picks the one that matches
+  the game version, so nothing needs to be added. A DLL only works for the exact version in its name
+  (see docs\dll_offsets.md). For a version not in the folder, Settings > DataCollection DLLs > Add DLL
+  takes a file named DataCollection_<version>.dll.
 
 VIEW THE CHARTS
   Open bar_charts.html and load a log (.txt) from the game folder or the logs folder.
